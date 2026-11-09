@@ -1,0 +1,124 @@
+/* 기본 색 */
+:root {
+  --main: #1f6feb;
+  --line: #d0d7de;
+  --bg: #f6f8fa;
+}
+
+body {
+  margin: 0;
+  font-family: 'Malgun Gothic', sans-serif;
+  background: var(--bg);
+  color: #222;
+}
+
+/* 제목 가운데 */
+header {
+  text-align: center;
+  padding: 24px 16px 8px;
+}
+
+/* 월 선택 버튼 */
+.months {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.month {
+  padding: 8px 20px;
+  border: 1px solid var(--main);
+  border-radius: 20px;
+  background: white;
+  color: var(--main);
+  cursor: pointer;
+}
+.month.active {
+  background: var(--main);
+  color: white;
+}
+
+/* 본문: 왼쪽 넓게, 오른쪽 좁게 */
+main {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 16px;
+  padding: 0 16px;
+}
+
+/* 흰 상자 공통 */
+.box {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+h2 {
+  margin-top: 0;
+  font-size: 18px;
+}
+
+/* 아직 안 채운 영역 표시 */
+.placeholder {
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed var(--line);
+  border-radius: 8px;
+  color: #888;
+}
+#map {
+  height: 400px;
+}
+
+/* 대회 목록 표 */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+th, td {
+  padding: 8px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+}
+tbody tr {
+  cursor: pointer;
+}
+tbody tr:hover {
+  background: #eef4ff;
+}
+tbody tr.selected {
+  background: #dbe8ff;
+}
+.empty {
+  text-align: center;
+  color: #888;
+}
+
+/* 하단 질문 버튼 */
+footer {
+  margin: 0 16px 16px;
+}
+#faq-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+#faq-buttons button {
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--bg);
+  cursor: pointer;
+}
+
+/* 화면이 좁으면 한 줄로 */
+@media (max-width: 800px) {
+  main {
+    grid-template-columns: 1fr;
+  }
+}
