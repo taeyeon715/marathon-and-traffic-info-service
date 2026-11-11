@@ -4,23 +4,26 @@
 
 ## 로컬에서 실행하기
 
-브라우저에서 `index.html`을 바로 열면 CSV를 읽지 못하므로 간단한 서버를 띄워서 확인한다.
-
 ```bash
 # 저장소 최상위 폴더에서 실행
-python -m http.server 8000
+pip install -r requirements.txt   # 처음 한 번만
+streamlit run app.py
 ```
 
-브라우저에서 http://localhost:8000/web/ 접속
+브라우저가 자동으로 열림 (안 열리면 http://localhost:8501 접속)
 
-서버 종료는 터미널에서 `Ctrl + C`
+코드를 저장하면 브라우저 오른쪽 위 `Rerun`을 눌러 바로 확인 가능, 종료는 터미널에서 `Ctrl + C`
 
 ## 폴더 구조
 
 ```
 01_marathon_crawling.ipynb   마라톤 온라인 대회 목록 크롤링
 data/                        대회·코스 데이터
-web/                         웹페이지 (index.html, style.css, app.js)
+app.py                       전체 화면 배치 (제목, 월 선택, 각 파트 불러오기)
+race_list.py                 대회 목록
+course_map.py                코스 지도
+traffic.py                   교통통제 정보
+faq.py                       자주 묻는 질문
 ```
 
 ## 데이터
@@ -58,9 +61,9 @@ web/                         웹페이지 (index.html, style.css, app.js)
 
 | 이름 | 파트 | 작업 위치 |
 |---|---|---|
-| 건우 | 코스 지도: 선택한 대회의 경유지를 Leaflet 지도에 선과 마커(출발·반환·도착)로 표시 | `app.js`의 `drawMap()`, `#map` |
-| 하진 | 교통통제 정보: 통제 대회의 구간·시간 정리, 12월 서울시 공지 나오면 `교통통제` 값 갱신 | `app.js`의 `showTraffic()`, `#traffic` |
-| 예린 | 대회 목록: 표 정렬·검색, 종목/교통통제 필터, 취소·코스 없는 대회 표시 | `app.js`의 `showRaces()`, `#race-table` |
-| 서영 | 자주 묻는 질문 + 디자인: 질문 버튼과 답변 작성, 전체 색·글꼴·간격 정리 | `app.js`의 `FAQ`, `style.css` |
+| 건우 | 코스 지도: 선택한 대회의 경유지를 folium 지도에 선과 마커(출발·반환·도착)로 표시 | `course_map.py` |
+| 하진 | 교통통제 정보: 통제 대회의 구간·시간 정리, 12월 서울시 공지 나오면 `교통통제` 값 갱신 | `traffic.py` |
+| 예린 | 대회 목록: 표 정렬·검색, 종목/교통통제 필터, 취소·코스 없는 대회 표시 | `race_list.py` |
+| 서영 | 자주 묻는 질문 + 디자인: 질문 버튼과 답변 작성, 화면 꾸미기 | `faq.py` |
 
-각자 맡은 부분은 코드에 `TODO` 주석으로 표시되어 있음
+각자 자기 파일만 수정하면 되고, 할 일은 파일 안에 `TODO` 주석으로 표시되어 있음
