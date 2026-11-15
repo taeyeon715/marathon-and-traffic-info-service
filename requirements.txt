@@ -1,4 +1,4 @@
 pandas
-streamlit
+streamlit>=1.67
 folium
 streamlit-folium
