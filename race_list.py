@@ -7,13 +7,13 @@ import streamlit as st
 
 WEEKDAYS = ['월', '화', '수', '목', '금', '토', '일']
 
-# 코스 유형: 교통통제가 있으면 '도심 도로', 아니면 장소·대회명의 단어로 판단
+# 코스 유형: 교통통제가 있으면 '도심 도로', 아니면 장소, 대회명의 단어로 판단
 TRAIL_WORDS = ['트레일', 'TRAL', '청계산', '수서역', '일자산']
 RIVER_WORDS = ['한강', '뚝섬', '신정교', '영롱이', '안양천', '중랑천', '우이천', '물빛무대']
 PARK_WORDS = ['공원', '평화광장', '평화의 광장', '평화의광장', '유수지', '축구장', '가든파이브']
 COURSE_TYPES = ['도심 도로', '공원', '한강·하천', '산(트레일런)', '기타']
 
-# waypoints.csv의 '구분' 값 → 대회명 뒤에 붙일 짧은 표시
+
 STATUS_LABELS = {'대회취소': '취소', '코스정보없음': '코스 정보 없음'}
 
 
@@ -33,7 +33,7 @@ def name_with_status(race):
 
 def course_type_of(race):
     """출발 장소와 교통통제 여부로 코스 유형을 추정한다."""
-    if race['교통통제'] == 1:  # 도로를 막는 대회는 공원 출발이어도 실제로는 도로를 달림
+    if race['교통통제'] == 1:  
         return '도심 도로'
     text = f"{race['대회장소']} {race['대회명']} {race['대회종목']}"
     if any(w in text for w in TRAIL_WORDS):
@@ -61,10 +61,10 @@ def signup_status(period, today):
 
 
 def show_summary(found):
-    """기간 요약 숫자 2칸: 대회 수, 교통통제 대회 수."""
+    """기간 요약 숫자 2칸: 대회 수, 광역 교통통제 대회 수."""
     col1, col2 = st.columns(2)
     col1.metric('대회 수', f'{len(found)}개')
-    col2.metric('교통통제 대회', f'{(found["교통통제"] == 1).sum()}개')
+    col2.metric('광역 교통통제 대회', f'{(found["교통통제"] == 1).sum()}개')
 
 
 def text_or_dash(value):
@@ -91,7 +91,7 @@ def show_race_detail(race):
 - **코스 유형** : {race['코스유형']} (출발지·교통통제로 추정)
 - **종목** : {text_or_dash(race['대회종목'])}
 - **접수** : {text_or_dash(race['접수기간'])} ({race['접수']})
-- **교통통제** : {'있음' if race['교통통제'] == 1 else '없음'}
+- **교통통제** : {'광역 교통통제 대상 (서울시 공지)' if race['교통통제'] == 1 else '정보 없음 (서울시 광역 교통통제 공지에 없음)'}
 - **주최** : {text_or_dash(race['주최단체'])}
 - **홈페이지** : {homepage if homepage == '-' else f'[바로가기]({homepage})'}
 """)
@@ -104,7 +104,7 @@ def show_race_detail(race):
 
 def show_race_list(races, month=None):
     """고른 기간의 대회를 표로 보여주고, 클릭한 대회 한 줄을 돌려준다.
-    (month는 예전 app.py와 호환용으로만 받고 쓰지 않음)
+    (month는 예전 app.py와 호환용으로 남겨 둔 것이라 쓰지 않음)
     """
     today = date.today()
 
@@ -122,7 +122,7 @@ def show_race_list(races, month=None):
     col1, col2, col3 = st.columns([1, 1, 2])  # 둘째 줄: 종목 / 코스 유형 / 체크박스 2개
     event = col1.selectbox('종목', ['전체', '풀', '하프', '10km', '5km'])
     course = col2.selectbox('코스 유형', ['전체'] + COURSE_TYPES)
-    no_traffic_only = col3.checkbox('교통통제 없는 대회만')
+    no_traffic_only = col3.checkbox('교통통제 정보 없는 대회만')
     signup_only = col3.checkbox('접수중인 대회만')
 
     if end < start:  # 종료일을 시작일보다 앞으로 고른 경우
@@ -140,7 +140,7 @@ def show_race_list(races, month=None):
     found['코스유형'] = found.apply(course_type_of, axis=1)
     found['표시'] = found['번호'].map(load_race_status()).fillna('')  # 취소·코스 정보 없음만 글자가 들어감
 
-    if keyword:  # 검색어가 대회명에 들어 있는 대회만 (대소문자·띄어쓰기 무시)
+    if keyword:  # 검색어가 대회명에 들어 있는 대회만 (대소문자,띄어쓰기 무시)
         name = found['대회명'].str.replace(' ', '').str.lower()
         found = found[name.str.contains(keyword.replace(' ', '').lower(), regex=False)]
 
@@ -161,7 +161,7 @@ def show_race_list(races, month=None):
     # 3. 기간 요약 숫자
     show_summary(found)
 
-    # 4. 화면에 보여줄 표: 날짜, 대회명, 종목만 (나머지는 누르면 세부 정보로)
+    # 4. 화면에 보여줄 표: 날짜, 대회명, 종목만
     table = found[['날짜', '대회명', '대회종목']].rename(columns={'대회종목': '종목'})
     table['대회명'] = found.apply(name_with_status, axis=1)  # 취소·코스 정보 없는 대회는 이름 뒤에 표시
 

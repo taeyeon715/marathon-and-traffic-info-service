@@ -16,21 +16,16 @@ waypoints = pd.read_csv('data/waypoints.csv', dtype={'대회번호': str})
 # 1. 제목 (가운데)
 st.markdown("<h1 style='text-align:center'>마라톤 코스 모아보기 & 교통 정보</h1>", unsafe_allow_html=True)
 
-# 2. 월 선택
-month = st.radio('월 선택', ['2026-11', '2026-12'],
-                 format_func=lambda m: m[:4] + '년 ' + str(int(m[5:])) + '월',
-                 horizontal=True)
-
-# 3. 본문: 왼쪽(목록 + 지도) / 오른쪽(교통통제)
+# 2. 본문: 왼쪽(목록 + 지도) / 오른쪽(교통통제)
 left, right = st.columns([2, 1])
 
 with left:
-    race = show_race_list(races, month)  # 클릭한 대회 한 줄 (없으면 None)
+    race = show_race_list(races)  # 클릭한 대회 한 줄 (없으면 None)
     show_course_map(race, waypoints)
 
 with right:
     show_traffic(race)
 
-# 4. 하단 질문 버튼
+# 3. 하단 질문 버튼
 st.divider()
 show_faq()
