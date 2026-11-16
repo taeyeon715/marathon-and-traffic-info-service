@@ -33,4 +33,4 @@ with right:
 
 # 4. 하단 질문 버튼
 st.divider()
-show_faq()
+show_faq(races)
