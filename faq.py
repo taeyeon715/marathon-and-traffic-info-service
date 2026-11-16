@@ -43,7 +43,7 @@ def prepare_data(races):
 
     df = races.copy()
 
-    df['날짜'] = pd.to_datatime(df['날짜'], erroers = 'coerce')
+    df['날짜'] = pd.to_datetime(df['날짜'], errors = 'coerce')
     return df
 
 def show_difficulty(df):
@@ -57,60 +57,60 @@ def show_difficulty(df):
 
         for distance in distances:
             results.append({'대회명' :row ['대회명'], '코스 거리':f'{distance}km', '난이도':get_difficulty(distance)})
-        result_df = pd.DataFrame(results)
+    result_df = pd.DataFrame(results)
 
-        if result_df.empty:
-            st.warning('분석할 수 있는 거리 데이터가 없습니다.')
-            return
+    if result_df.empty:
+        st.warning('분석할 수 있는 거리 데이터가 없습니다.')
+        return
 
-        level = st.selectbox('원하는 난이도를 선택하세요.', ['전체', '초급', '초중급', '중급', '상급'])
+    level = st.selectbox('원하는 난이도를 선택하세요.', ['전체', '초급', '초중급', '중급', '상급'], key ='faq_difficulty_level'
+)
+    if level != '전체':
+        result_df=result_df[result_df['난이도'] == level]
 
-        if level != '전체':
-            result_df=result_df[result_df['난이도'] == level]
+    st.dataframe(result_df, use_container_width=True,hide_index=True)
 
-        st.dataframe(result_df, use_container_width=True,hide_index=True)
-
-        st.caption('거리 기준으로 분류한 참고용 난이도입니다.'
+    st.caption('거리 기준으로 분류한 참고용 난이도입니다.'
                    '실제 코스의 고도와 경사도는 반영되지 않았습니다.')
 
 def show_season(df):
 
-            st.subheader('계절별 마라톤 코스 분석')
+    st.subheader('계절별 마라톤 코스 분석')
 
-            season = {'봄' : [3,4,5],
-                      '여름' : [6,7,8],
-                      '가을': [9,10,11],
-                      '겨울':[12,1,2]}
+    seasons = {'봄' : [3,4,5],
+                '여름' : [6,7,8],
+                '가을': [9,10,11],
+                '겨울':[12,1,2]}
 
-            counts = {}
+    counts = {}
 
-            for season, months in season.item():
-                counts[season] = df[df['날짜'].dt.month.isin(months)].shape[0]
+    for season_name, months in seasons.items():
+        counts[season_name] = df[df['날짜'].dt.month.isin(months)].shape[0]
 
 
-            st.write('계절별 데이터에 포함된 대회 수')
+    st.write('계절별 데이터에 포함된 대회 수')
 
-            st.dataframe(pd.DataFrame({'계절' : list(counts.key()), '대회 수' : list(counts.values())}), use_container_width=True, hide_index=True)
+    st.dataframe(pd.DataFrame({'계절' : list(counts.keys()), '대회 수' : list(counts.values())}), use_container_width=True, hide_index=True)
 
-            season = st.selectbox('분석할 계절을 선택하세요.', list(season.keys()), key='select')
+    selected_season = st.selectbox('분석할 계절을 선택하세요.', list(seasons.keys()), key='faq_season_select')
 
-            selected = df[df['날짜'].dt.month.isin(season[season])]
+    selected = df[df['날짜'].dt.month.isin(seasons[selected_season])]
 
-            if selected.empty:
+    if selected.empty:
 
-                st.warning(f'현재 데이터에는 {season}에 개최되는 ''대회 정보가 없습니다.')
+        st.warning(f'현재 데이터에는 {selected_season}에 개최되는 ''대회 정보가 없습니다.')
 
-            else:
-                st.success(f'{season}에 개최되는 대회는''f{len(selected)}개입니다.')
+    else:
+        st.success(f'{selected_season}에 개최되는 대회는''f{len(selected)}개입니다.')
 
-                st.dataframe(selected[['대회명', '날짜', '대회지역','대회장소']], use_container_width=True, hide_index=True)
+        st.dataframe(selected[['대회명', '날짜', '대회지역','대회장소']], use_container_width=True, hide_index=True)
 
-                st.caption('현재 데이터에 기록된 개최 날짜와 장소를 보여줍니다.''계절별 기후나 코스 적합성을 판단하는 데이터는 별도로 필요합니다.')
+        st.caption('현재 데이터에 기록된 개최 날짜와 장소를 보여줍니다.''계절별 기후나 코스 적합성을 판단하는 데이터는 별도로 필요합니다.')
 
 def show_region(df):
     st.subheader('지역별 마라톤 개최 현황')
 
-    region = df['대회 지역'].dropna().astype(str).str.strip()
+    region = df['대회지역'].dropna().astype(str).str.strip()
 
     counts = region.value_counts()
 
@@ -143,7 +143,7 @@ def show_faq(races):
     st.header('마라톤 데이터 분석 질문')
     st.caption('궁금한 질문을 선택하면 수집된 마라톤 데이터를 분석해 드립니다')
 
-    questions = ['마라톤 코스별로 난이도를 매겨줘', '계절에 따라 달리기 좋은 마라톤 코스를 추천해줘''마라톤 대회가 아직 열리지 않은 지역이 어디야?']
+    questions = ['마라톤 코스별로 난이도를 메겨줘', '계절에 따라 달리기 좋은 마라톤 코스를 추천해줘','마라톤 대회가 아직 열리지 않은 지역이 어디야?']
 
     cols = st.columns(2)
 
@@ -153,7 +153,7 @@ def show_faq(races):
             if st.button(question, key=f'faq_{i}', use_container_width=True):
                 st.session_state['selected_faq'] = i
 
-    st.divider
+    st.divider()
 
     selected = st.session_state.get('selected_faq')
 
