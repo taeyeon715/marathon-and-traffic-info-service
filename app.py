@@ -28,8 +28,4 @@ with right:
 
 # 3. 하단 질문 버튼
 st.divider()
-<<<<<<< HEAD
 show_faq(races)
-=======
-show_faq()
->>>>>>> 31149f76a7d5c03abcc59a053c82795418a9cfaa
